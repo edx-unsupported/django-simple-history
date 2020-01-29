@@ -1488,7 +1488,7 @@ class ManyToManyTest(TestCase):
     def setUp(self):
         self.model = PollWithManyToMany
         self.history_model = self.model.history.model
-        self.place = Place.objects.create(name='Home')
+        self.place = Place.objects.create(name="Home")
         self.poll = PollWithManyToMany.objects.create(
             question="what's up?", pub_date=today
         )
@@ -1539,7 +1539,7 @@ class ManyToManyTest(TestCase):
 
         # And the historical place is the correct one
         historical_place = m2m_record.historical_places.first()
-        self.assertEqual(historical_place.place, self.place.id)
+        self.assertEqual(historical_place.place, self.place)
 
     def test_remove(self):
         # Add and remove a many-to-many child
@@ -1559,7 +1559,7 @@ class ManyToManyTest(TestCase):
 
         # And the previous row still has the correct one
         historical_place = previous_m2m_record.historical_places.first()
-        self.assertEqual(historical_place.place, self.place.id)
+        self.assertEqual(historical_place.place, self.place)
 
     def test_clear(self):
         # Add some places
@@ -1608,9 +1608,19 @@ class ManyToManyTest(TestCase):
         m2m_record = self.poll.history.all()[0]
         self.assertEqual(m2m_record.historical_places.count(), 1)
 
-        # place is just the ID of the original Place instance
+        # Place instance cannot be created...
         historical_place = m2m_record.historical_places.first()
-        self.assertEqual(historical_place.place, original_place_id)
+        with self.assertRaises(ObjectDoesNotExist):
+            x = historical_place.place.id
+
+        # But the values persist
+        historical_place_values = m2m_record.historical_places.all().values()[0]
+        self.assertEqual(historical_place_values['history_id'], m2m_record.history_id)
+        self.assertEqual(historical_place_values['place_id'], original_place_id)
+        self.assertEqual(
+            historical_place_values['pollwithmanytomany_id'],
+            self.poll.id
+        )
 
     def test_delete_parent(self):
         # Add a place
@@ -1634,7 +1644,7 @@ class ManyToManyTest(TestCase):
 
         # And it is the correct one
         historical_place = prev_record.historical_places.first()
-        self.assertEqual(historical_place.place, self.place.id)
+        self.assertEqual(historical_place.place, self.place)
 
     def test_update_child(self):
         self.poll.places.add(self.place)
@@ -1652,7 +1662,7 @@ class ManyToManyTest(TestCase):
         m2m_record = self.poll.history.all()[0]
         self.assertEqual(m2m_record.historical_places.count(), 1)
         historical_place = m2m_record.historical_places.first()
-        self.assertEqual(Place.objects.get(pk=historical_place.place).name, "Updated")
+        self.assertEqual(historical_place.place.name, "Updated")
 
     def test_update_parent(self):
         self.poll.places.add(self.place)
@@ -1670,7 +1680,7 @@ class ManyToManyTest(TestCase):
         m2m_record = self.poll.history.all()[0]
         self.assertEqual(m2m_record.historical_places.count(), 1)
         historical_place = m2m_record.historical_places.first()
-        self.assertEqual(historical_place.place, self.place.id)
+        self.assertEqual(historical_place.place, self.place)
 
     def test_bulk_add_remove(self):
         # Add some places
@@ -1702,7 +1712,7 @@ class ManyToManyTest(TestCase):
         self.assertEqual(m2m_record.historical_places.all().count(), 1)
 
         historical_place = m2m_record.historical_places.first()
-        self.assertEqual(historical_place.place, self.place.id)
+        self.assertEqual(historical_place.place, self.place)
 
 
 @override_settings(**database_router_override_settings)
