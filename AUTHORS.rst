@@ -18,8 +18,9 @@ Authors
 - Ben Lawson (`blawson <https://github.com/blawson>`_)
 - `bradford281 <https://github.com/bradford281>`_
 - Brian Armstrong (`barm <https://github.com/barm>`_)
-- Buddy Lindsey, Jr.
 - Brian Dixon
+- Brian Mesick (`bmedx <https://github.com/bmedx>`_)
+- Buddy Lindsey, Jr.
 - Christopher Broderick (`uhurusurfa <https://github.com/uhurusurfa>`_)
 - Corey Bertram
 - Craig Maloney (`craigmaloney <https://github.com/craigmaloney>`_)
